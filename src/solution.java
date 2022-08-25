@@ -112,6 +112,99 @@ public class solution {
         return true;
     }
 
+    //  24/08/2022
+    public int pivotIndex(int[] nums) {
+        int left = 0;
+        int right = 0;
+        for (int i = 0; i < nums.length; i++) {
+            right += nums[i];
+        }
+        for (int i = 0; i < nums.length; i++) {
+            right -= nums[i];
+            if (left == right) {
+                return i;
+            }
+            left += nums[i];
+        }
+        return -1;
+    }
+
+    public boolean isIsomorphic(String s, String t) {
+        int[][] pair1 = new int[129][1];
+        int[][] pair2 = new int[129][1];
+        for (int i = 0; i < s.length(); i++) {
+            int chars = s.charAt(i);
+            int chart = t.charAt(i);
+            if (pair1[chars][0] != 0) {
+                if (pair1[chars][0] != chart) return false;
+            } else {
+                pair1[chars][0] = chart;
+            }
+            if (pair2[chart][0] != 0) {
+                if (pair2[chart][0] != chars) return false;
+            } else {
+                pair2[chart][0] = chars;
+            }
+        }
+        return true;
+    }
+
+    public boolean isSubsequence(String s, String t) {
+        int i = 0;
+        if (s.isEmpty()) return true;
+        int chars = s.charAt(0);
+        for (int j = 0; j < t.length(); j++) {
+            int chart = t.charAt(j);
+            if (chars == chart) {
+                i++;
+                if (i == s.length()) return true;
+                chars = s.charAt(i);
+            }
+        }
+        return false;
+    }
+
+
+    //  25/08/2022
+    public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
+        if (list1 == null) return list2;
+        if (list2 == null) return list1;
+        ListNode merge;
+        if (list2.val > list1.val) {
+            merge = new ListNode(list1.val, mergeTwoLists(list1.next, list2));
+        } else {
+            merge = new ListNode(list2.val, mergeTwoLists(list2.next, list1));
+        }
+        return merge;
+    }
+
+    public ListNode reverseList_my(ListNode head) {
+        if (head == null) return null;
+        List list = new ArrayList();
+        while (head.next != null) {
+            list.add(head.val);
+            head = head.next;
+        }
+        list.add(head.val);
+        ListNode res = new ListNode((int) list.get(0));
+        for (int i = 1; i < list.size(); i++) {
+            res = new ListNode((int) list.get(i), res);
+        }
+        return res;
+    }
+
+    public ListNode reverseList(ListNode head) {
+        // Special case...
+        if (head == null || head.next == null) return head;
+        // Create a new node to call the function recursively and we get the reverse linked list...
+        ListNode res = reverseList(head.next);
+        // Set head node as head.next.next...
+        head.next.next = head;
+        //set head's next to be null...
+        head.next = null;
+        return res;     // Return the reverse linked list...
+    }
+
 
     public static void main(String[] args) {
         String str = "a";
