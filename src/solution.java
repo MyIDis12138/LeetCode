@@ -1,5 +1,4 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class solution {
     public int maximumWealth(int[][] accounts) {
@@ -205,10 +204,311 @@ public class solution {
         return res;     // Return the reverse linked list...
     }
 
+    //    26/08/2022
+    public ListNode detectCycle(ListNode head) {
+/*        List<Integer> nodes = new ArrayList<Integer>();
+        if (head == null || head.next == null || head.next.val == -1) return null;
+        while (head.next != null && head.next.val != -1 ) {
+            nodes.add(head.val);
+            for (int i = 0; i < nodes.size(); i++) {
+                if (head.next.val == nodes.get(i)) return head.next;
+            }
+            head = head.next;
+        }
+        return null;*/
+        // Take a HashSet to store unique values and we are storing address of ListNodes which should be unique if there is no cycle.
+        HashSet<ListNode> set = new HashSet<>();
+        // Traverse elements of the list through the loop...
+        // Insert current node inside the set and move forward.
+        while (head != null && set.add(head)) {
+            head = head.next;
+        }
+        // If node already present inside the set, It means we reach that node again then return that node.
+        return head;
+    }
+
+    public boolean hasCycle(ListNode head) {
+        ListNode fast = head;
+        ListNode low = head;
+        while (fast != null && fast.next != null) {
+            fast = fast.next.next;
+            low = low.next;
+            if (fast == low) return true;
+        }
+        return false;
+    }
+
+    //  27/08/2022
+    public int maxProfit(int[] prices) {
+/*        int max = 0;
+        int[] maxnext = new int[prices.length];
+        maxnext[prices.length - 1] = prices[prices.length - 1];
+        for (int i = prices.length - 2; i >= 0; i--) {
+            int temp = prices[i];
+            if (temp > maxnext[i + 1]) {
+                maxnext[i] = temp;
+            } else {
+                maxnext[i] = maxnext[i + 1];
+            }
+        }
+        for (int i = 0; i < prices.length - 1; i++) {
+            int diff = maxnext[i] - prices[i];
+            if (diff > max) max = diff;
+        }
+        return max;*/
+
+        int max = 0;
+        int current = Integer.MAX_VALUE;
+        for (int i = 0; i < prices.length; i++) {
+            if (prices[i] < current) current = prices[i];
+            int temp = prices[i] - current;
+            if (temp > max) max = temp;
+        }
+        return max;
+    }
+
+    public int longestPalindrome(String s) {
+        if (s == "") return 0;
+        int[][] index = new int[58][1];
+        for (int i = 0; i < s.length(); i++) {
+            index[s.charAt(i) - 65][0]++;
+        }
+        int len = 0;
+        boolean is_singal = false;
+        for (int i = 0; i < 58; i++) {
+            int j = index[i][0];
+            if (!is_singal && j % 2 == 1) is_singal = true;
+            len += (j / 2) * 2;
+        }
+        if (is_singal) len += 1;
+        return len;
+    }
+
+    public boolean isValid(String s) {
+        // 40 41 (); 91 93 []; 123, 125{};
+        Stack left = new Stack();
+
+        for (int i = 0; i < s.length(); i++) {
+            int j = s.charAt(i);
+            if (isleft(j)) left.add(j);
+            if (isright(j)) {
+                if (left.isEmpty()) return false;
+                if (!pair((int) left.pop(), j)) return false;
+            }
+        }
+        if (!left.isEmpty()) return false;
+        return true;
+    }
+
+    private boolean isleft(int c) {
+        if (c == 40 || c == 91 || c == 123) return true;
+        return false;
+    }
+
+    private boolean isright(int c) {
+        if (c == 93 || c == 125 || c == 41) return true;
+        return false;
+    }
+
+    private boolean pair(int left, int right) {
+        if (left == 40 && right == 41) return true;
+        if (left == right - 2) return true;
+        return false;
+    }
+
+    //  28/08/2022
+
+    public List<Integer> preorder(Node root) {
+        List<Integer> list = new ArrayList<Integer>();
+        if (root == null) return list;
+        list.add(root.val);
+        if (root.children == null) return list;
+        for (int i = 0; i < root.children.size(); i++) {
+            list.addAll(preorder(root.children.get(i)));
+        }
+        return list;
+    }
+
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        // Create an array list to store the output result...
+        List<List<Integer>> output = new ArrayList<>();
+        // Base case: If the tree is empty...
+        if (root == null) return output;
+        // Initialize a queue to store the nodes on the same level & add root in it...
+        LinkedList<TreeNode> q = new LinkedList<TreeNode>();
+        q.add(root);
+        // Traverse a loop untill the queue becomes empty...
+        while (!q.isEmpty()) {
+            // Denotes the number of elements on that level...
+            int size = q.size();
+            // A temporary list to store all the left and right child for all the node in the level...
+            ArrayList<Integer> temp = new ArrayList<>(size);
+            for (int idx = 0; idx < size; idx++) {
+                // Initialize a treenode as the popped element of the queue & store the value of the new treenode to temp...
+                TreeNode node = q.remove();
+                temp.add(node.val);
+                // Store all the nodes of next level...
+                // Add left and right child if they are not None...
+                if (node.left != null)
+                    q.add(node.left);
+                if (node.right != null)
+                    q.add(node.right);
+            }
+            // Add the temp to output result...
+            output.add(temp);
+        }
+        return output;       // Return the output result...
+    }
+
+    //    29/08/2022
+    public int search(int[] nums, int target) {
+        int f = 0;
+        int l = nums.length - 1;
+        int i = 0;
+        while (l >= f) {
+            int medium = (l + f) / 2;
+            //System.out.println(f +" "+ medium +  " " + l);
+            if (target == nums[medium]) return medium;
+            if (target > nums[medium]) {
+                f = medium + 1;
+            } else {
+                l = medium - 1;
+            }
+        }
+        return -1;
+    }
+
+
+    public int firstBadVersion(int n) {
+        if (n == 1) return n;
+        int start = 1;
+        int end = n;
+        int mid = start + (end - start) / 2;
+        while (start <= end) {
+            if (isBadVersion(start)) {
+                return start;
+            } else if (isBadVersion(mid)) {
+                end = mid;
+                mid = start + (end - start) / 2;
+            } else {
+                start = mid + 1;
+                mid = start + (end - start) / 2;
+            }
+        }
+        return -1;
+    }
+
+
+    private boolean isBadVersion(int version) {
+        return true;
+    }
+
+
+    public int[][] diagonalSort(int[][] mat) {
+        int row = mat.length;
+        int column = mat[0].length;
+        int diff = Math.abs(row - column);
+        if (row >= column) {
+            int start_r = 0;
+            int start_c = 0;
+            for (int i = 0; i < diff + 1; i++) {
+                int[] sort = new int[column];
+                for (int j = 0; j < column; j++) {
+                    sort[j] = mat[start_r + j][start_c + j];
+                }
+                Arrays.sort(sort);
+                for (int j = 0; j < column; j++) {
+                    mat[start_r + j][start_c + j] = sort[j];
+                }
+                start_r++;
+            }
+
+            //sort the rest
+            start_r = diff + 1;
+            start_c = 1;
+            int size = column - 1;
+            for (int i = 0; i < (column - 2); i++) {
+                int[] sort = new int[size];
+                int row_in = start_r + i;
+                int col_in = start_c + i;
+
+                //System.out.println("row: " + start_r + ", Column: " + start_c);
+                //System.out.println("Size: " + size);
+
+                for (int j = 0; j < size; j++) {
+                    sort[j] = mat[j][col_in + j];
+                }
+                Arrays.sort(sort);
+                for (int j = 0; j < size; j++) {
+                    mat[j][col_in + j] = sort[j];
+                }
+
+
+                for (int j = 0; j < size; j++) {
+                    sort[j] = mat[j + row_in][j];
+                }
+                Arrays.sort(sort);
+                for (int j = 0; j < size; j++) {
+                    mat[row_in + j][j] = sort[j];
+                }
+                size--;
+            }
+
+        } else {
+            // column > row
+            int start_r = 0;
+            int start_c = 0;
+
+            // sort full diagonal
+            for (int i = 0; i < diff + 1; i++) {
+                int[] sort = new int[row];
+                for (int j = 0; j < row; j++) {
+                    sort[j] = mat[j][start_c + j];
+                }
+                Arrays.sort(sort);
+                for (int j = 0; j < row; j++) {
+                    mat[j][start_c + j] = sort[j];
+                }
+                start_c++;
+            }
+
+            //sort the rest
+            start_r = 1;
+            start_c = diff + 1;
+            int size = row - 1;
+            for (int i = 0; i < (row - 2); i++) {
+                int[] sort = new int[size];
+                int row_in = start_r + i;
+                int col_in = start_c + i;
+
+                //System.out.println("row: " + row_in + ", Column: " + col_in);
+                //System.out.println("Size: " + size);
+
+                for (int j = 0; j < size; j++) {
+                    sort[j] = mat[j][col_in + j];
+                }
+                Arrays.sort(sort);
+                for (int j = 0; j < size; j++) {
+                    mat[j][col_in + j] = sort[j];
+                }
+
+                for (int j = 0; j < size; j++) {
+                    sort[j] = mat[j + row_in][j];
+                }
+                Arrays.sort(sort);
+                for (int j = 0; j < size; j++) {
+                    mat[row_in + j][j] = sort[j];
+                }
+                size--;
+            }
+        }
+        return mat;
+    }
+
 
     public static void main(String[] args) {
-        String str = "a";
-        int ch = str.charAt(0);
-        System.out.println(ch);
+        solution a = new solution();
+        String str = "()[]{}";
+        System.out.println(a.isValid(str));
     }
 }

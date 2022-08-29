@@ -20,6 +20,7 @@
   <component name="FindBugs-IDEA-Workspace">
     <analyzeAfterCompile>true</analyzeAfterCompile>
     <toolWindowToFront>false</toolWindowToFront>
+    <toolWindowEditorPreview>false</toolWindowEditorPreview>
   </component>
   <component name="ProjectId" id="2DevamBOsSbUx9JvGZn8EmPvQ2e" />
   <component name="ProjectViewState">
