@@ -267,8 +267,9 @@ public class solution {
         return max;
     }
 
+
     public int longestPalindrome(String s) {
-        if (s == "") return 0;
+        if (s.equals("")) return 0;
         int[][] index = new int[58][1];
         for (int i = 0; i < s.length(); i++) {
             index[s.charAt(i) - 65][0]++;
@@ -505,10 +506,154 @@ public class solution {
         return mat;
     }
 
+    // better solution for diagonal sort
+    /*public int[][] diagonalSort(int[][] mat) {
+        int n=mat.length;
+        int count=0;//this keeps the count of elements in frst row & 1st col
+        int m=mat[0].length;
+        int i=0,k=0;
+//this while loop will be sending all the starting element-index of the diagonal
+        while(count<m+n){
+            if(i==n-1&&k<m){++k;}
+            if(i!=n-1){i++;}
+
+            pass(mat,n-1-i,k,n,m);count++;
+        }
+        return mat;
+    }
+    public void pass(int [][]a,int row,int col,int n,int m){
+
+        //here we perform COUNT SORT IN EVERY DIAGONAL
+
+        int []arr=new int [101]; //Frequency Array
+        int i=row,j=col;
+        while(row<n&&col<m){
+            arr[a[row++][col++]]++;
+        }
+//SORTING ELEMENTS IN ORIGINAL ARAY DIAGONAL
+        for(int k=0;k<101;k++){
+            if(arr[k]>0){
+                while(arr[k]!=0){
+                    a[i++][j++]=k;
+                    --arr[k];
+                }
+            }
+        }
+    }*/
+
+    // 30/08/2022
+    public boolean isValidBST(TreeNode root) {
+        return BST_max(root, Long.MIN_VALUE, Long.MAX_VALUE);
+    }
+
+    private boolean BST_max(TreeNode root, long min, long max) {
+        if (root.right == null && root.left == null) return true;
+        if (root.right == null) {
+            boolean valid = root.left.val < root.val && root.left.val > min;
+            return valid && BST_max(root.left, min, root.val);
+        }
+        if (root.left == null) {
+            boolean valid = root.right.val > root.val && root.right.val < max;
+            return valid && BST_max(root.right, root.val, max);
+        }
+        boolean valid1 = root.left.val < root.val && root.right.val > root.val;
+        boolean valid2 = root.left.val > min && root.right.val < max;
+        return valid1 && valid2 && BST_max(root.left, min, root.val) && BST_max(root.right, root.val, max);
+    }
+
+    // without sorted tree
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        TreeNode LCA = root;
+        while (true) {
+            boolean left = subtree_contain(LCA.left, p) && subtree_contain(LCA.left, q);
+            boolean right = subtree_contain(LCA.right, p) && subtree_contain(LCA.right, q);
+            if (!left && !right) break;
+            if (left) LCA = LCA.left;
+            else LCA = LCA.right;
+            //System.out.println(LCA.val);
+        }
+        return LCA;
+    }
+
+    private boolean subtree_contain(TreeNode root, TreeNode node) {
+        if (root == null) return false;
+        boolean valid = root.val == node.val;
+        if (valid) {
+            return true;
+        } else {
+            if (root.right == null && root.left == null) return false;
+            if (root.right == null) return subtree_contain(root.left, node);
+            if (root.left == null) return subtree_contain(root.right, node);
+            return subtree_contain(root.right, node) || subtree_contain(root.left, node);
+        }
+    }
+
+    // 31/08/2022
+    public int[][] floodFill(int[][] image, int sr, int sc, int color) {
+        int this_color = image[sr][sc];
+        image[sr][sc] = color;
+        if (sr != 0 && image[sr - 1][sc] == this_color && image[sr - 1][sc] != color)
+            image = floodFill(image, sr - 1, sc, color);
+        if (sr != image.length - 1 && image[sr + 1][sc] == this_color && image[sr + 1][sc] != color)
+            image = floodFill(image, sr + 1, sc, color);
+        if (sc != 0 && image[sr][sc - 1] == this_color && image[sr][sc - 1] != color)
+            image = floodFill(image, sr, sc - 1, color);
+        if (sc != image[0].length - 1 && image[sr][sc + 1] == this_color && image[sr][sc + 1] != color)
+            image = floodFill(image, sr, sc + 1, color);
+        return image;
+    }
+
+    public int numIslands(char[][] grid) {
+        int islands = 0;
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] == '1') {
+                    floodFill_char(grid, i, j, '0');
+                    islands++;
+                }
+            }
+        }
+        return islands;
+    }
+
+    public char[][] floodFill_char(char[][] image, int sr, int sc, char color) {
+        int this_color = image[sr][sc];
+        image[sr][sc] = color;
+        if (sr != 0 && image[sr - 1][sc] == this_color && image[sr - 1][sc] != color)
+            image = floodFill_char(image, sr - 1, sc, color);
+        if (sr != image.length - 1 && image[sr + 1][sc] == this_color && image[sr + 1][sc] != color)
+            image = floodFill_char(image, sr + 1, sc, color);
+        if (sc != 0 && image[sr][sc - 1] == this_color && image[sr][sc - 1] != color)
+            image = floodFill_char(image, sr, sc - 1, color);
+        if (sc != image[0].length - 1 && image[sr][sc + 1] == this_color && image[sr][sc + 1] != color)
+            image = floodFill_char(image, sr, sc + 1, color);
+        return image;
+    }
+
+    // 01/09/2022
+    public int fib(int n) {
+        if (n == 0 || n == 1) return n;
+        return fib(n - 1) + fib(n - 2);
+    }
+
+    // better solution with memory
+/*    static private Map < Integer, Integer > dp = new HashMap < > ();
+    public int fib(int n) {
+        if(n==0 || n==1)    return n;
+        if (dp.containsKey(n))    return dp.get(n);
+        int res = fib(n-1) + fib(n-2);
+        dp.put(n, res);
+        return res;
+    }
+    */
+
+    public int climbStairs(int n) {
+
+    }
 
     public static void main(String[] args) {
-        solution a = new solution();
-        String str = "()[]{}";
-        System.out.println(a.isValid(str));
+        solution sol = new solution();
+        int out = sol.fib(5);
+        System.out.println(out);
     }
 }
